@@ -1,0 +1,62 @@
+eureka: 
+  client: 
+    serviceUrl: 
+      defaultZone: http://${server.eureka}/eureka/
+management: 
+  endpoint: 
+    metrics: 
+      enabled: true
+    prometheus: 
+      enabled: true
+  endpoints: 
+    web: 
+      exposure: 
+        include: "*"
+  metrics: 
+    export: 
+      prometheus: 
+        enabled: true
+resilience4j: 
+  circuitbreaker: 
+    configs: 
+      default: 
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 3
+        permittedNumberOfCallsInHalfOpenState: 3
+        recordExceptions: java.lang.Exception
+        waitDurationInOpenState: 5s
+    instances: 
+      mainService: 
+        baseConfig: default
+  rateLimiter: 
+    configs: 
+      default: 
+        limitForPeriod: 3
+        limitRefreshPeriod: 5s
+        timeoutDuration: 1000
+    instances: 
+      mainService: 
+        baseConfig: default
+  retry: 
+    configs: 
+      default: 
+        maxRetryAttempts: 3
+        retryExceptions: java.lang.Exception
+        waitDuration: 5000
+    instances: 
+      mainService: 
+        baseConfig: default
+spring: 
+  application: 
+    name: swaggerpetstore
+  jackson: 
+    serialization: 
+      WRITE_DATES_AS_TIMESTAMPS: false
+  profiles: 
+    active: local
+  sleuth: 
+    sampler: 
+      percentage: 1
+  zipkin: 
+    base-url: http://${server.zipkin}
